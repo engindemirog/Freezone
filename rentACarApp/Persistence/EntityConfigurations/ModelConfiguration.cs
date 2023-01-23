@@ -22,6 +22,7 @@ public class ModelConfiguration : IEntityTypeConfiguration<Model>
         builder.HasIndex(p => p.Name, "UK_Models_Name").IsUnique();
 
         builder.HasOne(p => p.Brand);
+        builder.HasMany(p=>p.Cars);
 
         Model[] modelsSeed = { new(1, 1,1,1,"Series 1", 2000, "series1.jpg")
                              , new(2, 1,1,2,"Series 2", 3000, "series2.jpg")

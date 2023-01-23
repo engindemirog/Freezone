@@ -21,10 +21,11 @@ namespace Domain.Entities
         public virtual Fuel? Fuel { get; set; }
         public virtual Transmission? Transmission { get; set; }
 
+        public virtual ICollection<Car> Cars { get; set; }
 
         public Model()
         {
-
+            Cars = new HashSet<Car>();
         }
 
         public Model(int id, int brandId, int fuelId, int transmissionId, string name, double dailyPrice, string imageUrl):this()

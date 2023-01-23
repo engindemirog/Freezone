@@ -21,6 +21,7 @@ public static class PersistenceServiceRegistration
                     "RentACarConnectionString")));
 
         services.AddScoped<IBrandRepository,BrandRepository>();
+        services.AddScoped<ICarRepository, CarRepository>();
         services.AddScoped<IFuelRepository, FuelRepository>();
         services.AddScoped<ITransmissionRepository, TransmissionRepository>();
         services.AddScoped<IModelRepository, ModelRepository>();
