@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Freezone.Core.Application.Pipelines.Transaction;
 
 namespace Application
 {
@@ -29,6 +30,8 @@ namespace Application
 
             services.AddTransient(typeof(IPipelineBehavior<,>)
                 , typeof(LoggingBehavior<,>));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
 
             services.AddSubClassesOfType(Assembly.GetExecutingAssembly()
                 , typeof(BaseBusinessRules));

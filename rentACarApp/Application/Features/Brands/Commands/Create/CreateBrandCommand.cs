@@ -37,6 +37,7 @@ public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest
             Brand mappedBrand = _mapper.Map<Brand>(request);
 
             _brandRepository.Add(mappedBrand);
+           // _brandRepository.Add(mappedBrand);
 
             CreatedBrandResponse response = _mapper.Map<CreatedBrandResponse>(mappedBrand);
 

@@ -42,7 +42,6 @@ namespace Application.Features.Cars.Commands.Create
                 Car mappedCar = _mapper.Map<Car>(request);
 
                 Car createdCar = await _carRepository.AddAsync(mappedCar);
-
                 CreatedCarResponse createdCarResponse =  _mapper.Map<CreatedCarResponse>(createdCar);
 
                 return createdCarResponse;
