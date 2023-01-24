@@ -1,4 +1,6 @@
-﻿namespace Application.Features.Cars.Commands.Create;
+﻿using Domain.Enums;
+
+namespace Application.Features.Cars.Commands.Create;
 
 public class CreatedCarResponse
 {
@@ -8,4 +10,5 @@ public class CreatedCarResponse
     public short ModelYear { get; set; }
     public string Plate { get; set; }
     public short MinFindeksCreditRate { get; set; }
+    public CarState CarState { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using Freezone.Core.Persistence.Repositories;
+﻿using Domain.Enums;
+using Freezone.Core.Persistence.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ public class Car:Entity
     public int Kilometer { get; set; }
     public short ModelYear { get; set; }
     public string Plate { get; set; }
+
+    public CarState CarState { get; set; }
+
     public short MinFindeksCreditRate { get; set; }
 
 

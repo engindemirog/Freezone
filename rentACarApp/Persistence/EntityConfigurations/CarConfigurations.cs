@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Enums;
 
 namespace Persistence.EntityConfigurations;
 
@@ -21,6 +22,7 @@ public class CarConfigurations: IEntityTypeConfiguration<Car>
         builder.Property(p => p.ModelId).HasColumnName("ModelId");
         builder.Property(p => p.Kilometer).HasColumnName("Kilometer");
         builder.Property(p => p.Plate).HasColumnName("Plate");
+        builder.Property(p => p.CarState).HasColumnName("CarState").HasDefaultValue(CarState.Available);
 
         builder.HasOne(p => p.Model);
 

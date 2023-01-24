@@ -13,8 +13,6 @@
     <Folder Include="Features\Cars\Commands\Delete\" />
     <Folder Include="Features\Cars\Commands\Update\" />
     <Folder Include="Features\Cars\Constants\" />
-    <Folder Include="Features\Cars\Rules\" />
-    <Folder Include="Features\Cars\Queries\" />
     <Folder Include="Features\Models\Commands\" />
     <Folder Include="Features\Models\Constants\" />
     <Folder Include="Features\Models\Rules\" />

@@ -8,21 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Features.Brands.Rules
+namespace Application.Features.Brands.Rules;
+
+public class BrandBusinessRules:BaseBusinessRules
 {
-    public class BrandBusinessRules:BaseBusinessRules
+    private readonly IBrandRepository _brandRepository;
+
+    public BrandBusinessRules(IBrandRepository brandRepository)
     {
-        private readonly IBrandRepository _brandRepository;
+        _brandRepository = brandRepository;
+    }
 
-        public BrandBusinessRules(IBrandRepository brandRepository)
-        {
-            _brandRepository = brandRepository;
-        }
-
-        public async Task BrandNameCannotBeDuplicatedWhenInserted(string name) 
-        {
-            Brand? result = await _brandRepository.GetAsync(b=>b.Name==name);
-            if (result != null) throw new BusinessException("Brand name already exists");
-        }
+    public async Task BrandNameCannotBeDuplicatedWhenInserted(string name) 
+    {
+        Brand? result = await _brandRepository.GetAsync(b=>b.Name==name);
+        if (result != null) throw new BusinessException("Brand name already exists");
     }
 }
