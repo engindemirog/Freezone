@@ -2,7 +2,9 @@
 using Application.Services.Repositories;
 using AutoMapper;
 using Domain.Entities;
+using Freezone.Core.Application.Pipelines.Caching;
 using Freezone.Core.Application.Pipelines.Logging;
+using Freezone.Core.Application.Pipelines.Transaction;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,11 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Brands.Commands.Create;
 
-public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest
+public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest,ICacheRemoverRequest
 {
     public string Name { get; set; }
+    public bool BypassCache { get; }
+    public string CacheKey => "GetListBrand";
 
     public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, CreatedBrandResponse>
     {
@@ -37,7 +41,7 @@ public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest
             Brand mappedBrand = _mapper.Map<Brand>(request);
 
             _brandRepository.Add(mappedBrand);
-           // _brandRepository.Add(mappedBrand);
+            //_brandRepository.Add(mappedBrand);
 
             CreatedBrandResponse response = _mapper.Map<CreatedBrandResponse>(mappedBrand);
 

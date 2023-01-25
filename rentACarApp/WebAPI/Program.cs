@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicatioonServices();
 
+//builder.Services.AddDistributedMemoryCache();
+builder.Services.AddStackExchangeRedisCache(opt=>opt.Configuration="localhost:6379");
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();

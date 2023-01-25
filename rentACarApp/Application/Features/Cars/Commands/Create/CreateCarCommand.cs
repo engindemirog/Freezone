@@ -47,6 +47,5 @@ namespace Application.Features.Cars.Commands.Create
                 return createdCarResponse;
             }
         }
-
     }
 }

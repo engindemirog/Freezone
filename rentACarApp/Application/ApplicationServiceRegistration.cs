@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Freezone.Core.Application.Pipelines.Transaction;
+using Freezone.Core.Application.Pipelines.Caching;
 
 namespace Application
 {
@@ -32,6 +33,8 @@ namespace Application
                 , typeof(LoggingBehavior<,>));
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheRemovingBehavior<,>));
 
             services.AddSubClassesOfType(Assembly.GetExecutingAssembly()
                 , typeof(BaseBusinessRules));
