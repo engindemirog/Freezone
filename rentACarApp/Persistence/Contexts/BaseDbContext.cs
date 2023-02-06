@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Freezone.Core.Security.Entities;
 
 namespace Persistence.Contexts;
 
@@ -25,6 +26,9 @@ public class BaseDbContext : DbContext
     public DbSet<Model> Models { get; set; }
     public DbSet<Fuel> Fuel { get; set; }
     public DbSet<Transmission> Transmissions { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<OperationClaim> OperationClaims { get; set; }
+    public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
