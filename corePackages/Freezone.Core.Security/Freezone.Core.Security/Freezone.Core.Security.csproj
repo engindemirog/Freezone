@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="JWT\" />
+    <Folder Include="Hashing\" />
   </ItemGroup>
 
   <ItemGroup>

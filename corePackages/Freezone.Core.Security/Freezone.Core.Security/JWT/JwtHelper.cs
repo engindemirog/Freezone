@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.Extensions;
@@ -8,10 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Freezone.Core.Security.JWT;
 
-public class JwtHelper: ITokenHelper
+public class JwtHelper : ITokenHelper
 {
-    private TokenOptions _tokenOptions;
-    
+    private readonly TokenOptions _tokenOptions;
+
     private DateTime _accessTokenExpiration;
 
     public JwtHelper(IConfiguration configuration)
@@ -23,37 +22,40 @@ public class JwtHelper: ITokenHelper
     {
         _accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOptions.AccessTokenExpiration);
 
-        var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
-        var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
+        SecurityKey securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
+        SigningCredentials signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
+        JwtSecurityToken jwt = createJwtSecurityToken(user, operationClaims, signingCredentials);
 
-        var jwt = createJwtSecurityToken(user, operationClaims, signingCredentials);
+        JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
+        string token = jwtSecurityTokenHandler.WriteToken(jwt);
 
-        //TODO
-
-        return new AccessToken();
+        return new AccessToken
+        {
+            Token = token,
+            Expiration = _accessTokenExpiration
+        };
     }
 
-    private JwtSecurityToken createJwtSecurityToken(User user, ICollection<OperationClaim> operationClaims, SigningCredentials signingCredentials)
-    {
-        return new JwtSecurityToken(
-            issuer: _tokenOptions.Issuer,
-            audience: _tokenOptions.Audience,
+    private JwtSecurityToken createJwtSecurityToken(User user, ICollection<OperationClaim> operationClaims,
+                                                    SigningCredentials signingCredentials) =>
+        new JwtSecurityToken(
+            _tokenOptions.Issuer,
+            _tokenOptions.Audience,
             expires: _accessTokenExpiration,
             notBefore: DateTime.Now,
             claims: setClaims(user, operationClaims),
             signingCredentials: signingCredentials
-            );
-    }
+        );
 
     private IEnumerable<Claim> setClaims(User user, ICollection<OperationClaim> operationClaims)
     {
         List<Claim> claims = new();
-        
+
         claims.AddNameIdentifier(user.Id.ToString());
         claims.AddEmail(user.Email);
         claims.AddName($"{user.FirstName} {user.LastName}");
         claims.AddRoles(operationClaims.Select(oc => oc.Name).ToArray());
 
-        return claims;
+        return claims.ToArray();
     }
 }
