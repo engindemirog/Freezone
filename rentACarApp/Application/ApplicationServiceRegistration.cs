@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Freezone.Core.Application.Pipelines.Transaction;
 using Freezone.Core.Application.Pipelines.Caching;
+using Freezone.Core.Security.JWT;
 
 namespace Application
 {
@@ -41,6 +42,7 @@ namespace Application
 
             services.AddSingleton<LoggerServiceBase, FileLogger>();
 
+            services.AddScoped<ITokenHelper, JwtHelper>();
 
             return services;
 
