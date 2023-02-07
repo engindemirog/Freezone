@@ -18,14 +18,7 @@ public class AuthService : IAuthService
 
     public async Task<AccessToken> CreateAccessToken(User user)
     {
-        var operationClaims = await _userOperationClaimRepository.Query().AsNoTracking()
-                                                                 .Where(uoc => uoc.UserId == user.Id)
-                                                                 .Include(uoc => uoc.OperationClaim)
-                                                                 .Select(uoc => new OperationClaim
-                                                                 {
-                                                                     Id = uoc.OperationClaimId,
-                                                                     Name = uoc.OperationClaim.Name
-                                                                 }).ToListAsync();
+        var operationClaims = await _userOperationClaimRepository.GetOperationClaimsByUserIdAsync(user.Id);
         var accessToken = _tokenHelper.CreateToken(user, operationClaims);
         return accessToken;
     }
