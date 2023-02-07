@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Auth\Commands\Register\" />
+    <Folder Include="Features\Auth\Constants\" />
+    <Folder Include="Features\Auth\Profiles\" />
+    <Folder Include="Features\Auth\Rules\" />
     <Folder Include="Features\Brands\Commands\Delete\" />
     <Folder Include="Features\Brands\Commands\Update\" />
     <Folder Include="Features\Brands\Constants\" />
