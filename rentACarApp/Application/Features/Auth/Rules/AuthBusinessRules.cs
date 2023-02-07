@@ -2,6 +2,7 @@
 using Application.Services.Repositories;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
 using Freezone.Core.Security.Entities;
+using Freezone.Core.Security.Hashing;
 
 namespace Application.Features.Auth.Rules;
 
@@ -21,5 +22,20 @@ public class AuthBusinessRules
         {
             throw new BusinessException(AuthBusinessMessages.UserEmailAlreadyExists);
         }
+    }
+
+    public Task UserShouldBeExists(User? user)
+    {
+        if (user == null)
+            throw new BusinessException(AuthBusinessMessages.UserNotFound);
+        return Task.CompletedTask;
+    }
+
+    public Task UserPasswordShouldBeMatch(User user, string password)
+    {
+        bool isMatched = HashingHelper.VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt);
+        if (isMatched == false)
+            throw new BusinessException(AuthBusinessMessages.UserPasswordNotMatch);
+        return Task.CompletedTask;
     }
 }
