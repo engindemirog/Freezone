@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Services.AuthService;
 using Freezone.Core.Application.Pipelines.Transaction;
 using Freezone.Core.Application.Pipelines.Caching;
 using Freezone.Core.Security.JWT;
@@ -20,7 +21,7 @@ namespace Application
 {
     public static class ApplicationServiceRegistration
     {
-        public static IServiceCollection AddApplicatioonServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
@@ -43,6 +44,7 @@ namespace Application
             services.AddSingleton<LoggerServiceBase, FileLogger>();
 
             services.AddScoped<ITokenHelper, JwtHelper>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
 

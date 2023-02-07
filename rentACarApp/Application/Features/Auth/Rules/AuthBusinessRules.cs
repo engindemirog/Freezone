@@ -1,12 +1,13 @@
 ﻿using Application.Features.Auth.Constants;
 using Application.Services.Repositories;
+using Freezone.Core.Application.Rules;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.Hashing;
 
 namespace Application.Features.Auth.Rules;
 
-public class AuthBusinessRules
+public class AuthBusinessRules : BaseBusinessRules
 {
     private IUserRepository _userRepository;
 
