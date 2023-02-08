@@ -35,10 +35,10 @@ namespace Application
             services.AddTransient(typeof(IPipelineBehavior<,>)
                 , typeof(LoggingBehavior<,>));
 
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheRemovingBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
             services.AddSubClassesOfType(Assembly.GetExecutingAssembly()
                 , typeof(BaseBusinessRules));

@@ -2,5 +2,5 @@
 
 public static class BrandsRoles
 {
-    public const string Create = "Brand.Create";
+    public const string Create = "Brands.Create";
 }
