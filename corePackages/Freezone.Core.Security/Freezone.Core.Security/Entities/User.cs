@@ -12,9 +12,11 @@ public class User:Entity
     public bool Status { get; set; }
 
     public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; }
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 
     public User()
     {
         UserOperationClaims = new HashSet<UserOperationClaim>();
+        RefreshTokens = new HashSet<RefreshToken>();
     }
 }
