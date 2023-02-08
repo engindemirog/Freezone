@@ -33,6 +33,13 @@ public class HttpExceptionHandler : ExceptionHandler
         return Response.WriteAsync(details.ToString());
     }
 
+    protected override Task HandleException(UnauthorizedAccessException exception)
+    {
+        Response.StatusCode = StatusCodes.Status401Unauthorized;
+        string details = new AuthorizationProblemDetails(exception.Message).AsJson();
+        return Response.WriteAsync(details);
+    }
+
     //protected override Task HandleException(AuthorizationException authorizationException)
     //{
     //    Response.StatusCode = StatusCodes.Status401Unauthorized;

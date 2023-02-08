@@ -22,7 +22,7 @@ public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest,
     
     public bool BypassCache { get; }
     public string CacheKey => "GetListBrand";
-    public string[] Roles => new string[] { BrandsRoles.Create };
+    public string[] Roles => new string[] { BrandsRoles.Create }; // Bu komutu kullanabilmesi, kendisine rol atanması gerekiyor.
 
     public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, CreatedBrandResponse>
     {

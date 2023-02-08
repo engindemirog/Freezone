@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Services.AuthService;
+using Freezone.Core.Application.Pipelines.Authorization;
 using Freezone.Core.Application.Pipelines.Transaction;
 using Freezone.Core.Application.Pipelines.Caching;
 using Freezone.Core.Security.JWT;
@@ -37,6 +38,7 @@ namespace Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheRemovingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
 
             services.AddSubClassesOfType(Assembly.GetExecutingAssembly()
                 , typeof(BaseBusinessRules));
