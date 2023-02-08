@@ -16,10 +16,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\Freezone.Core.Security\Freezone.Core.Security\Freezone.Core.Security.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Dtos\" />
+    <Folder Include="Pipelines\Authorization\" />
   </ItemGroup>
 
 </Project>

@@ -14,7 +14,6 @@
     <Folder Include="Features\Auth\Rules\" />
     <Folder Include="Features\Brands\Commands\Delete\" />
     <Folder Include="Features\Brands\Commands\Update\" />
-    <Folder Include="Features\Brands\Constants\" />
     <Folder Include="Features\Cars\Commands\Delete\" />
     <Folder Include="Features\Cars\Commands\Update\" />
     <Folder Include="Features\Cars\Constants\" />

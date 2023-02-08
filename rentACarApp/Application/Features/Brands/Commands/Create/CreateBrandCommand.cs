@@ -11,14 +11,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Features.Brands.Constants;
+using Freezone.Core.Application.Pipelines.Authorization;
 
 namespace Application.Features.Brands.Commands.Create;
 
-public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest,ICacheRemoverRequest
+public class CreateBrandCommand:IRequest<CreatedBrandResponse>,ILoggableRequest,ICacheRemoverRequest,ISecuredOperation
 {
     public string Name { get; set; }
+    
     public bool BypassCache { get; }
     public string CacheKey => "GetListBrand";
+    public string[] Roles => new string[] { BrandsRoles.Create };
 
     public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, CreatedBrandResponse>
     {

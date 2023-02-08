@@ -4,12 +4,12 @@ namespace Freezone.Core.Security.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static List<string> Claims(this ClaimsPrincipal claimsPrincipal, string claimType)
+    public static List<string>? Claims(this ClaimsPrincipal claimsPrincipal, string claimType)
     {
         return claimsPrincipal?.FindAll(claimType)?.Select(c => c.Value).ToList();
     }
 
-    public static List<string> ClaimsRoles(this ClaimsPrincipal claimsPrincipal)
+    public static List<string>? ClaimsRoles(this ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal?.Claims(ClaimTypes.Role);
     }
