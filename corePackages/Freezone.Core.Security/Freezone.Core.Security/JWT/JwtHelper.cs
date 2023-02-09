@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,17 @@ public class JwtHelper : ITokenHelper
         };
     }
 
+    public RefreshToken CreateRefreshToken(User user, string ipAddress)
+    {
+        return new RefreshToken()
+        {
+            UserId = user.Id,
+            Token = generateRandomRefreshToken(),
+            CreatedByIp = ipAddress,
+            ExpiresDate = DateTime.Now.AddMinutes(_tokenOptions.RefreshTokenExpiration),
+        };
+    }
+
     private JwtSecurityToken createJwtSecurityToken(User user, ICollection<OperationClaim> operationClaims,
                                                     SigningCredentials signingCredentials) 
         => new JwtSecurityToken(
@@ -58,5 +70,13 @@ public class JwtHelper : ITokenHelper
         claims.AddRoles(operationClaims.Select(oc => oc.Name).ToArray());
 
         return claims.ToArray();
+    }
+
+    private string generateRandomRefreshToken()
+    {
+        byte[] bytes = new byte[32];
+        using RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
+        randomNumberGenerator.GetBytes(bytes); // İlgili byte arrayini şifrelenmiş random değerlerle doldurur.
+        return Convert.ToBase64String(bytes); // byte arrayini string'e base64 ile çeviriyoruz.
     }
 }
