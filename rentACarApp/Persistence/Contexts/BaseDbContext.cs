@@ -29,6 +29,7 @@ public class BaseDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<OperationClaim> OperationClaims { get; set; }
     public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

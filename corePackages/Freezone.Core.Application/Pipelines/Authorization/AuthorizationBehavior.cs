@@ -24,11 +24,11 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
             throw new UnauthorizedAccessException("User is not authenticated.");
 
         // Authorization
-        // Opsiyon 1: var a = request.GetType().FullName;
+        // Opsiyon 1: var a = request.GetType().FullName; // reflection
         // Opsiyon 2: Database
         // Bunların dezavantajlarını değerlendirmek gerekir.
 
-        string[] requestRoles = request.Roles;
+        string[] requestRoles = request.Roles; // <FEATURE>.<COMMAND_NAME>
         if (requestRoles.Length == 0) return next();
 
         ICollection<string>? userRoles = _httpContextAccessor.HttpContext.User.ClaimsRoles();
