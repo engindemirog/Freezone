@@ -13,6 +13,7 @@ namespace Application.Features.Auth.Commands.Register;
 public class RegisterCommand : IRequest<RegisteredResponse>
 {
     public UserForRegisterDto UserForRegisterDto { get; set; }
+    public string IpAddress { get; set; }
 
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisteredResponse>
     {
@@ -46,7 +47,15 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 
             // Generate AccessToken
             AccessToken createdAccessToken = await _authService.CreateAccessToken(newUser);
-            RegisteredResponse response = new() { AccessToken = createdAccessToken };
+            
+            RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(newUser, request.IpAddress);
+            await _authService.AddRefreshToken(createdRefreshToken);
+
+            RegisteredResponse response = new()
+            {
+                AccessToken = createdAccessToken,
+                RefreshToken = createdRefreshToken
+            };
             return response;
         }
     }

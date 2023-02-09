@@ -42,7 +42,7 @@ public class LoginCommand : IRequest<LoggedResponse>
             LoggedResponse response = new()
             {
                 AccessToken = createdAccessToken,
-                //RefreshToken = refreshToken
+                RefreshToken = refreshToken
             };
             return response;
         }

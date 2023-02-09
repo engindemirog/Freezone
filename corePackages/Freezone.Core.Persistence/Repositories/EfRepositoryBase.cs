@@ -69,7 +69,10 @@ public class EfRepositoryBase<TEntity, TContext> : IAsyncRepository<TEntity>, IR
     }
     public async Task<List<TEntity>> AddRangeAsync(List<TEntity> entityList)
     {
-        Context.AddRangeAsync(entityList);
+        foreach (TEntity entityItem in entityList)
+        {
+            Context.Entry(entityItem).State = EntityState.Added;
+        }
         await Context.SaveChangesAsync();
         return entityList;
     }
@@ -82,7 +85,10 @@ public class EfRepositoryBase<TEntity, TContext> : IAsyncRepository<TEntity>, IR
     }
     public async Task<List<TEntity>> UpdateRangeAsync(List<TEntity> entityList)
     {
-        Context.Entry(entityList).State = EntityState.Modified;
+        foreach (TEntity entityItem in entityList)
+        {
+            Context.Entry(entityItem).State = EntityState.Modified;
+        }
         await Context.SaveChangesAsync();
         return entityList;
     }
@@ -95,7 +101,10 @@ public class EfRepositoryBase<TEntity, TContext> : IAsyncRepository<TEntity>, IR
     }
     public async Task<List<TEntity>> DeleteRangeAsync(List<TEntity> entity)
     {
-        Context.Entry(entity).State = EntityState.Deleted;
+        foreach (TEntity entityItem in entity)
+        {
+            Context.Entry(entityItem).State = EntityState.Deleted;
+        }
         await Context.SaveChangesAsync();
         return entity;
     }
