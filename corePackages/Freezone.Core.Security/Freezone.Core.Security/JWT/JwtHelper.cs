@@ -13,10 +13,11 @@ public class JwtHelper : ITokenHelper
     private readonly TokenOptions _tokenOptions;
 
     private DateTime _accessTokenExpiration;
+    public int RefreshTokenTTLOption => _tokenOptions.RefreshTokenTTL;
 
     public JwtHelper(IConfiguration configuration)
     {
-        _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+        _tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>()!;
     }
 
     public AccessToken CreateToken(User user, ICollection<OperationClaim> operationClaims)

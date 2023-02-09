@@ -11,6 +11,7 @@ namespace Application.Features.Auth.Commands.Login;
 public class LoginCommand : IRequest<LoggedResponse>
 {
     public UserForLoginDto UserForLoginDto { get; set; }
+    public string IpAddress { get; set; }
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoggedResponse>
     {
@@ -33,7 +34,16 @@ public class LoginCommand : IRequest<LoggedResponse>
             await _authBusinessRules.UserPasswordShouldBeMatch(user: user!, request.UserForLoginDto.Password);
 
             AccessToken createdAccessToken = await _authService.CreateAccessToken(user!);
-            LoggedResponse response = new() { AccessToken = createdAccessToken };
+            
+            await _authService.DeleteOldActiveRefreshTokens(user!);
+            RefreshToken refreshToken = await _authService.CreateRefreshToken(user!, request.IpAddress);
+            await _authService.AddRefreshToken(refreshToken);
+
+            LoggedResponse response = new()
+            {
+                AccessToken = createdAccessToken,
+                //RefreshToken = refreshToken
+            };
             return response;
         }
     }
