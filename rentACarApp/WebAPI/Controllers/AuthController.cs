@@ -33,4 +33,17 @@ public class AuthController : BaseController
         setRefreshTokenToCookie(response.RefreshToken);
         return Ok(response.AccessToken);
     }
+
+    //[HttpGet("RefreshToken")]
+    //public async Task<IActionResult> RefreshToken([FromBody] UserForRegisterDto userForRegisterDto)
+    //{
+    //    RegisteredResponse response =
+    //        await Mediator.Send(new RegisterCommand
+    //        {
+    //            UserForRegisterDto = userForRegisterDto,
+    //            IpAddress = getIpAddress()
+    //        });
+    //    setRefreshTokenToCookie(response.RefreshToken);
+    //    return Ok(response.AccessToken);
+    //}
 }

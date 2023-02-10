@@ -39,4 +39,11 @@ public class AuthBusinessRules : BaseBusinessRules
             throw new BusinessException(AuthBusinessMessages.UserPasswordNotMatch);
         return Task.CompletedTask;
     }
+
+    public Task RefreshTokenShouldBeExists(RefreshToken? refreshToken)
+    {
+        if (refreshToken == null)
+            throw new BusinessException(AuthBusinessMessages.RefreshTokenNotFound);
+        return Task.CompletedTask;
+    }
 }
