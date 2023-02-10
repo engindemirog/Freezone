@@ -10,10 +10,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Freezone.Core.Application.Pipelines.Authorization;
 
 namespace Application.Features.Brands.Queries.GetList
 {
     public class GetListBrandQuery:IRequest<GetListResponse<GetListBrandDto>>,ICachableRequest
+        //,ISecuredOperation
+        // ISecuredOperation olmayan/korunmayan operasyonları anonim/login yapmamış kullanıcılarda kullanabilecek.
     {
         public PageRequest PageRequest { get; set; }
 
@@ -22,7 +25,7 @@ namespace Application.Features.Brands.Queries.GetList
         public string CacheKey => "GetListBrand";
 
         public TimeSpan? SlidingExpiration { get; }
-
+        // public string[] Roles => Array.Empty<string>(); // Sadece login olması yeterli
         public class GetListBrandQueryHandler : IRequestHandler<GetListBrandQuery, GetListResponse<GetListBrandDto>>
         {
             private readonly IBrandRepository _brandRepository;
@@ -42,5 +45,6 @@ namespace Application.Features.Brands.Queries.GetList
                 return response;
             }
         }
+
     }
 }

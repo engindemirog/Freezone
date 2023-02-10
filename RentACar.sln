@@ -19,9 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "rentACarApp\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freezone.Core.Persistence", "corePackages\Freezone.Core.Persistence\Freezone.Core.Persistence.csproj", "{382B1029-5644-434F-94BD-25E9EF61DE1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freezone.Core.CrossCuttingConcerns", "corePackages\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj", "{FDF75BD4-A981-408A-87A3-6515E30E3642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freezone.Core.CrossCuttingConcerns", "corePackages\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj", "{FDF75BD4-A981-408A-87A3-6515E30E3642}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freezone.Core.Application", "corePackages\Freezone.Core.Application\Freezone.Core.Application.csproj", "{1588A1F2-B259-4DE7-ADE5-CACB85F9C546}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Freezone.Core.Application", "corePackages\Freezone.Core.Application\Freezone.Core.Application.csproj", "{1588A1F2-B259-4DE7-ADE5-CACB85F9C546}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Freezone.Core.Security", "corePackages\Freezone.Core.Security\Freezone.Core.Security\Freezone.Core.Security.csproj", "{4474ACFB-F9F7-4AB0-896D-90C6857E639B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{1588A1F2-B259-4DE7-ADE5-CACB85F9C546}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1588A1F2-B259-4DE7-ADE5-CACB85F9C546}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1588A1F2-B259-4DE7-ADE5-CACB85F9C546}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4474ACFB-F9F7-4AB0-896D-90C6857E639B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4474ACFB-F9F7-4AB0-896D-90C6857E639B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4474ACFB-F9F7-4AB0-896D-90C6857E639B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4474ACFB-F9F7-4AB0-896D-90C6857E639B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{382B1029-5644-434F-94BD-25E9EF61DE1B} = {10AD174F-A13A-4D09-8731-0A5069F4652A}
 		{FDF75BD4-A981-408A-87A3-6515E30E3642} = {10AD174F-A13A-4D09-8731-0A5069F4652A}
 		{1588A1F2-B259-4DE7-ADE5-CACB85F9C546} = {10AD174F-A13A-4D09-8731-0A5069F4652A}
+		{4474ACFB-F9F7-4AB0-896D-90C6857E639B} = {10AD174F-A13A-4D09-8731-0A5069F4652A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB4E01B4-0C72-4499-8A82-DC83385F4089}

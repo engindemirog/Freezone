@@ -7,15 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Auth\Commands\Login\" />
+    <Folder Include="Features\Auth\Commands\Register\" />
+    <Folder Include="Features\Auth\Constants\" />
+    <Folder Include="Features\Auth\Profiles\" />
+    <Folder Include="Features\Auth\Rules\" />
     <Folder Include="Features\Brands\Commands\Delete\" />
     <Folder Include="Features\Brands\Commands\Update\" />
-    <Folder Include="Features\Brands\Constants\" />
     <Folder Include="Features\Cars\Commands\Delete\" />
     <Folder Include="Features\Cars\Commands\Update\" />
     <Folder Include="Features\Cars\Constants\" />
     <Folder Include="Features\Models\Commands\" />
     <Folder Include="Features\Models\Constants\" />
     <Folder Include="Features\Models\Rules\" />
+    <Folder Include="Services\AuthService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\corePackages\Freezone.Core.Application\Freezone.Core.Application.csproj" />
     <ProjectReference Include="..\..\corePackages\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\..\corePackages\Freezone.Core.Security\Freezone.Core.Security\Freezone.Core.Security.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

@@ -17,10 +17,14 @@ public abstract class ExceptionHandler
         if (exception is ValidationException validationException)
             return HandleException(validationException);
 
+        if (exception is UnauthorizedAccessException unauthorizedAccessException)
+            return HandleException(unauthorizedAccessException);
+
         return HandleException(exception);
     }
 
     protected abstract Task HandleException(BusinessException exception);
     protected abstract Task HandleException(ValidationException exception);
+    protected abstract Task HandleException(UnauthorizedAccessException exception);
     protected abstract Task HandleException(Exception exception);
 }
