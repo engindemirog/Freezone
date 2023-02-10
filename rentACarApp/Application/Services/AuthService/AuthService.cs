@@ -40,22 +40,26 @@ public class AuthService : IAuthService
 
     public async Task DeleteOldActiveRefreshTokens(User user)
     {
+        // Yeni login işleminde, yeni bir refresh token zinciri oluşacaktır. Hali hazırda bulunan diğer zincirler (en son aktif olan token'a göre) yeterince eskiyse (RefreshTokenTTL opsiyonundaki süre kadar) silinir.
         ICollection<RefreshToken> oldActiveRefreshTokens = await _refreshTokenRepository
                                                                    .GetAllOldActiveRefreshTokensAsync(
                                                                        user, _tokenHelper.RefreshTokenTTLOption);
         await _refreshTokenRepository.DeleteRangeAsync(oldActiveRefreshTokens.ToList());
     }
 
-    public async Task RevokeRefreshToken(RefreshToken token, string ipAddress, string reason)
+    public async Task RevokeRefreshToken(RefreshToken token, string ipAddress, string reason, string? replacedByToken = null)
     {
+        // Bir refresh token'ı geçersiz kılmak için ilgili bilgileri doldurur ve veri tabanında günceller.
         token.RevokedDate = DateTime.Now;
         token.RevokedByIp = ipAddress;
         token.RevokedReason = reason;
+        token.ReplacedByToken = replacedByToken;
         await _refreshTokenRepository.UpdateAsync(token);
     }
 
     public async Task RevokeDescendantRefreshTokens(RefreshToken token, string ipAddress, string reason)
     {
+        // Eğerki hali hazırda geçersiz refresh token kullanılmaya çalışılırsa, o refresh token'ın tüm child refresh token'ları gezilerek en son zincirdeki aktif refresh token geçersiz kılınır.
         RefreshToken childRefreshToken =
             (await _refreshTokenRepository.GetAsync(rt => token.ReplacedByToken == rt.Token))!;
         if (childRefreshToken == null) throw new BusinessException("Kullanılmaya çalışılan Refresh Token'ın child bulunamadı");
@@ -64,5 +68,14 @@ public class AuthService : IAuthService
         else await RevokeDescendantRefreshTokens(childRefreshToken, ipAddress, reason);
     }
 
-    public Task<RefreshToken> RotateRefreshToken(RefreshToken token, string ipAddress) => throw new NotImplementedException();
+    public async Task<RefreshToken> RotateRefreshToken(User user, RefreshToken token, string ipAddress)
+    {
+        // Kullanılan refresh token'ı geçersiz kılıcak (revoke) aktifliği yeni refresh token'a vericek. Refresh token'larla oluşan oturum temsil eden zincire yeni aktif bir refresh token eklenmiş olacak.
+        RefreshToken newRefreshToken = _tokenHelper.CreateRefreshToken(user, ipAddress);
+        
+        await RevokeRefreshToken(token, ipAddress, "Yeni Refresh Token oluşturuldu", newRefreshToken.Token);
+        await AddRefreshToken(newRefreshToken);
+
+        return newRefreshToken;
+    }
 }

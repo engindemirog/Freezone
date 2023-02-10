@@ -6,6 +6,7 @@ public static class AuthBusinessMessages
     public const string UserNotFound = "Kullanıcı bulunamadı.";
     public const string UserPasswordNotMatch = "Kullanıcı şifresi eşleşmiyor.";
     public const string RefreshTokenNotFound = "Refresh token bulunamadı.";
+    public const string RefreshTokenNotActive = "Refresh token aktif değil.";
 
     public static string UserEmailAlreadyExitsByEmail(string email)
     {

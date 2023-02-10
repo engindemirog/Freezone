@@ -9,7 +9,7 @@ namespace Application.Features.Auth.Rules;
 
 public class AuthBusinessRules : BaseBusinessRules
 {
-    private IUserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
 
     public AuthBusinessRules(IUserRepository userRepository)
     {
@@ -18,11 +18,8 @@ public class AuthBusinessRules : BaseBusinessRules
 
     public async Task UserEmailCannotBeDuplicatedWhenInserted(string email)
     {
-        User? user = await _userRepository.GetAsync(u=>u.Email == email);
-        if (user != null)
-        {
-            throw new BusinessException(AuthBusinessMessages.UserEmailAlreadyExists);
-        }
+        User? user = await _userRepository.GetAsync(u => u.Email == email);
+        if (user != null) throw new BusinessException(AuthBusinessMessages.UserEmailAlreadyExists);
     }
 
     public Task UserShouldBeExists(User? user)
@@ -45,5 +42,12 @@ public class AuthBusinessRules : BaseBusinessRules
         if (refreshToken == null)
             throw new BusinessException(AuthBusinessMessages.RefreshTokenNotFound);
         return Task.CompletedTask;
+    }
+
+    public async Task RefreshTokenShouldBeActive(RefreshToken refreshToken)
+    {
+        if (refreshToken.RevokedDate != null ||
+            (refreshToken.RevokedDate == null && refreshToken.ExpiresDate < DateTime.Now))
+            throw new BusinessException(AuthBusinessMessages.RefreshTokenNotActive);
     }
 }
