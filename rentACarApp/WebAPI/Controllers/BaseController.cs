@@ -17,6 +17,11 @@ public class BaseController : ControllerBase
         return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
     }
 
+    protected string? getRefreshTokenFromCookie()
+    {
+        return Request.Cookies["refreshToken"];
+    }
+    
     protected void setRefreshTokenToCookie(RefreshToken refreshToken)
     {
         Response.Cookies.Append(key: "refreshToken",

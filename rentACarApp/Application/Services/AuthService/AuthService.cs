@@ -50,7 +50,7 @@ public class AuthService : IAuthService
     public async Task RevokeRefreshToken(RefreshToken token, string ipAddress, string reason, string? replacedByToken = null)
     {
         // Bir refresh token'ı geçersiz kılmak için ilgili bilgileri doldurur ve veri tabanında günceller.
-        token.RevokedDate = DateTime.Now;
+        token.RevokedDate = DateTime.UtcNow;
         token.RevokedByIp = ipAddress;
         token.RevokedReason = reason;
         token.ReplacedByToken = replacedByToken;

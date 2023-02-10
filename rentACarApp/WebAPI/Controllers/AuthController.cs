@@ -1,4 +1,5 @@
 ﻿using Application.Features.Auth.Commands.Login;
+using Application.Features.Auth.Commands.Refresh;
 using Application.Features.Auth.Commands.Register;
 using Freezone.Core.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -34,16 +35,16 @@ public class AuthController : BaseController
         return Ok(response.AccessToken);
     }
 
-    //[HttpGet("RefreshToken")]
-    //public async Task<IActionResult> RefreshToken([FromBody] UserForRegisterDto userForRegisterDto)
-    //{
-    //    RegisteredResponse response =
-    //        await Mediator.Send(new RegisterCommand
-    //        {
-    //            UserForRegisterDto = userForRegisterDto,
-    //            IpAddress = getIpAddress()
-    //        });
-    //    setRefreshTokenToCookie(response.RefreshToken);
-    //    return Ok(response.AccessToken);
-    //}
+    [HttpGet("RefreshToken")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        RefreshedResponse response =
+            await Mediator.Send(new RefreshCommand
+            {
+                RefreshToken = getRefreshTokenFromCookie(),
+                IpAddress = getIpAddress()
+            });
+        setRefreshTokenToCookie(response.RefreshToken);
+        return Ok(response.AccessToken);
+    }
 }
