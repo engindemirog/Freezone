@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Auth\Commands\Login\" />
+    <Folder Include="Features\Auth\Commands\Revoke\" />
     <Folder Include="Features\Auth\Commands\Register\" />
     <Folder Include="Features\Auth\Constants\" />
     <Folder Include="Features\Auth\Profiles\" />
