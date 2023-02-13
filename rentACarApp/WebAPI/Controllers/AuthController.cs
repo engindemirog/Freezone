@@ -1,4 +1,5 @@
-﻿using Application.Features.Auth.Commands.Login;
+﻿using Application.Features.Auth.Commands.EnableEmailAuthenticator;
+using Application.Features.Auth.Commands.Login;
 using Application.Features.Auth.Commands.Refresh;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Commands.Revoke;
@@ -61,5 +62,17 @@ public class AuthController : BaseController
                 IPAddress = getIpAddress()
             });
         return Ok(response);
+    }
+
+    [HttpPost("EnableEmailAuthenticator")]
+    public async Task<IActionResult> EnableEmailAuthenticator()
+    {
+        EnableEmailAuthenticatorCommand command = new()
+        {
+            UserId = getUserIdFromToken(),
+            VerifyEmailUrl = "https://localhost:5001/api/Auth/VerifyEmailAuthenticator" // TODO: refactor configuration
+        };
+        await Mediator.Send(command);
+        return Ok();
     }
 }

@@ -1,28 +1,33 @@
 ﻿using Application.Services.Repositories;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
+using Freezone.Core.Security.Authenticator.Email;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.JWT;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.AuthService;
 
 public class AuthService : IAuthService
 {
-    private IUserOperationClaimRepository _userOperationClaimRepository;
-    private ITokenHelper _tokenHelper;
-    IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IUserOperationClaimRepository _userOperationClaimRepository;
+    private readonly ITokenHelper _tokenHelper;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IEmailAuthenticatorHelper _emailAuthenticatorHelper;
 
-    public AuthService(IUserOperationClaimRepository userOperationClaimRepository, ITokenHelper tokenHelper, IRefreshTokenRepository refreshTokenRepository)
+    public AuthService(IUserOperationClaimRepository userOperationClaimRepository, ITokenHelper tokenHelper,
+                       IRefreshTokenRepository refreshTokenRepository,
+                       IEmailAuthenticatorHelper emailAuthenticatorHelper)
     {
         _userOperationClaimRepository = userOperationClaimRepository;
         _tokenHelper = tokenHelper;
         _refreshTokenRepository = refreshTokenRepository;
+        _emailAuthenticatorHelper = emailAuthenticatorHelper;
     }
 
     public async Task<AccessToken> CreateAccessToken(User user)
     {
-        var operationClaims = await _userOperationClaimRepository.GetOperationClaimsByUserIdAsync(user.Id);
-        var accessToken = _tokenHelper.CreateToken(user, operationClaims);
+        ICollection<OperationClaim> operationClaims =
+            await _userOperationClaimRepository.GetOperationClaimsByUserIdAsync(user.Id);
+        AccessToken accessToken = _tokenHelper.CreateToken(user, operationClaims);
         return accessToken;
     }
 
@@ -42,12 +47,13 @@ public class AuthService : IAuthService
     {
         // Yeni login işleminde, yeni bir refresh token zinciri oluşacaktır. Hali hazırda bulunan diğer zincirler (en son aktif olan token'a göre) yeterince eskiyse (RefreshTokenTTL opsiyonundaki süre kadar) silinir.
         ICollection<RefreshToken> oldActiveRefreshTokens = await _refreshTokenRepository
-                                                                   .GetAllOldActiveRefreshTokensAsync(
-                                                                       user, _tokenHelper.RefreshTokenTTLOption);
+                                                               .GetAllOldActiveRefreshTokensAsync(
+                                                                   user, _tokenHelper.RefreshTokenTTLOption);
         await _refreshTokenRepository.DeleteRangeAsync(oldActiveRefreshTokens.ToList());
     }
 
-    public async Task RevokeRefreshToken(RefreshToken token, string ipAddress, string reason, string? replacedByToken = null)
+    public async Task RevokeRefreshToken(RefreshToken token, string ipAddress, string reason,
+                                         string? replacedByToken = null)
     {
         // Bir refresh token'ı geçersiz kılmak için ilgili bilgileri doldurur ve veri tabanında günceller.
         token.RevokedDate = DateTime.UtcNow;
@@ -62,7 +68,8 @@ public class AuthService : IAuthService
         // Eğerki hali hazırda geçersiz refresh token kullanılmaya çalışılırsa, o refresh token'ın tüm child refresh token'ları gezilerek en son zincirdeki aktif refresh token geçersiz kılınır.
         RefreshToken childRefreshToken =
             (await _refreshTokenRepository.GetAsync(rt => token.ReplacedByToken == rt.Token))!;
-        if (childRefreshToken == null) throw new BusinessException("Kullanılmaya çalışılan Refresh Token'ın child bulunamadı");
+        if (childRefreshToken == null)
+            throw new BusinessException("Kullanılmaya çalışılan Refresh Token'ın child bulunamadı");
 
         if (childRefreshToken.RevokedDate == null) await RevokeRefreshToken(childRefreshToken, ipAddress, reason);
         else await RevokeDescendantRefreshTokens(childRefreshToken, ipAddress, reason);
@@ -72,10 +79,22 @@ public class AuthService : IAuthService
     {
         // Kullanılan refresh token'ı geçersiz kılıcak (revoke) aktifliği yeni refresh token'a vericek. Refresh token'larla oluşan oturum temsil eden zincire yeni aktif bir refresh token eklenmiş olacak.
         RefreshToken newRefreshToken = _tokenHelper.CreateRefreshToken(user, ipAddress);
-        
-        await RevokeRefreshToken(token, ipAddress, "Yeni Refresh Token oluşturuldu", newRefreshToken.Token);
+
+        await RevokeRefreshToken(token, ipAddress, reason: "Yeni Refresh Token oluşturuldu", newRefreshToken.Token);
         await AddRefreshToken(newRefreshToken);
 
         return newRefreshToken;
     }
+
+    public async Task<UserEmailAuthenticator> CreateEmailAuthenticator(User user)
+        => new UserEmailAuthenticator
+        {
+            UserId = user.Id,
+            Key = await _emailAuthenticatorHelper.CreateEmailActivationKeyAsync(),
+            IsVerified = false
+        };
+
+    public Task SendAuthenticatorCode(User user) => throw new NotImplementedException();
+
+    public Task VerifyAuthenticatorCode(User user, string code) => throw new NotImplementedException();
 }

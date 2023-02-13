@@ -1,4 +1,5 @@
 ﻿using Freezone.Core.Security.Entities;
+using Freezone.Core.Security.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,5 +34,10 @@ public class BaseController : ControllerBase
                                     Secure = true,
                                     SameSite = SameSiteMode.Strict
                                 });
+    }
+
+    protected int getUserIdFromToken()
+    {
+        return HttpContext.User.ClaimsNameIdentifier();
     }
 }
