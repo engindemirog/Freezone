@@ -92,7 +92,7 @@ public class AuthController : BaseController
     {
         VerifyEmailAuthenticatorCommand command = new()
         {
-            UserId = getUserIdFromToken(),
+            //UserId = getUserIdFromToken(),
             ActivationKey = activationKey
         };
         await Mediator.Send(command);
