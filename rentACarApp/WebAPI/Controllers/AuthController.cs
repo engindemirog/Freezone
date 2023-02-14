@@ -3,6 +3,7 @@ using Application.Features.Auth.Commands.Login;
 using Application.Features.Auth.Commands.Refresh;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Commands.Revoke;
+using Application.Features.Auth.Commands.VerifyEmailAuthenticator;
 using Freezone.Core.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -86,15 +87,15 @@ public class AuthController : BaseController
         return Ok();
     }
 
-    //[HttpGet("VerifyEmailAuthenticator")] // Verify Email URL api'a yönlendirdiği için GET kullandık. Bir frontend yardımıyla yapılırsa PUT olabilir.
-    //public async Task<IActionResult> EnableEmailAuthenticator()
-    //{
-    //    EnableEmailAuthenticatorCommand command = new()
-    //    {
-    //        UserId = getUserIdFromToken(),
-    //        VerifyEmailUrl =  // TODO: refactor configuration
-    //    };
-    //    await Mediator.Send(command);
-    //    return Ok();
-    //}
+    [HttpGet("VerifyEmailAuthenticator")] // Verify Email URL api'a yönlendirdiği için GET kullandık. Bir frontend yardımıyla yapılırsa PUT olabilir.
+    public async Task<IActionResult> EnableEmailAuthenticator([FromQuery] string activationKey)
+    {
+        VerifyEmailAuthenticatorCommand command = new()
+        {
+            UserId = getUserIdFromToken(),
+            ActivationKey = activationKey
+        };
+        await Mediator.Send(command);
+        return Ok();
+    }
 }

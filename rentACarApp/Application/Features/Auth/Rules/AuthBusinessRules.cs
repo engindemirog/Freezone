@@ -59,4 +59,11 @@ public class AuthBusinessRules : BaseBusinessRules
             throw new BusinessException(AuthBusinessMessages.UserAlreadyHasAuthenticator);
         return Task.CompletedTask;
     }
+
+    public Task UserEmailAuthenticatorShouldBeExists(UserEmailAuthenticator? userEmailAuthenticator)
+    {
+        if(userEmailAuthenticator is null)
+            throw new BusinessException(AuthBusinessMessages.UserEmailAuthenticatorNotFound);
+        return Task.CompletedTask;
+    }
 }
