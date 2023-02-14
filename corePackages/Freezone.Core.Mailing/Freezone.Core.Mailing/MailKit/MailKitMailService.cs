@@ -1,15 +1,47 @@
-﻿namespace Freezone.Core.Mailing.MailKit;
+﻿using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
+
+namespace Freezone.Core.Mailing.MailKit;
 
 public class MailKitMailService : IMailService
 {
-    // TODO: get configurations
-    public Task SendAsync(Mail mailData)
+    private MailSettings _mailSettings;
+
+    public MailKitMailService(IConfiguration configuration)
     {
-        // TODO: create mail message
+        _mailSettings = configuration.GetSection("MailSettings").Get<MailSettings>() 
+                        ?? throw new ArgumentNullException(nameof(MailSettings));
+    }
+    
+    public async Task SendAsync(Mail mailData)
+    {
+        MimeMessage mailToSend = new();
 
-        // TODO: Body
+        mailToSend.From.Add(new MailboxAddress(_mailSettings.SenderFullName, _mailSettings.SenderEmail));
+        mailToSend.To.Add(new MailboxAddress(mailData.ToFullName, mailData.ToEmail));
 
-        // TODO: SmtpClient
-        // TODO: Send
+        mailToSend.Subject = mailData.Subject;
+        BodyBuilder bodyBuilder = new()
+        {
+            TextBody = mailData.TextBody,
+            HtmlBody = mailData.HtmlBody
+        };
+        if (mailData.Attachments is not null)
+        {
+            foreach (MimeEntity? attachment in mailData.Attachments)
+            {
+                bodyBuilder.Attachments.Add(attachment);
+            }
+        }
+        mailToSend.Body = bodyBuilder.ToMessageBody();
+
+        using SmtpClient smtpClient = new();
+        await smtpClient.ConnectAsync(_mailSettings.Server, _mailSettings.Port);
+        //await smtpClient.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password); // Test Smtp Server'ı kullandığımız ve Authenticate gerekmediği için yorum satırına aldık.
+
+        await smtpClient.SendAsync(mailToSend);
+
+        await smtpClient.DisconnectAsync(quit: true);
     }
 }

@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\corePackages\Freezone.Core.Application\Freezone.Core.Application.csproj" />
     <ProjectReference Include="..\..\corePackages\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\..\corePackages\Freezone.Core.Mailing\Freezone.Core.Mailing\Freezone.Core.Mailing.csproj" />
     <ProjectReference Include="..\..\corePackages\Freezone.Core.Security\Freezone.Core.Security\Freezone.Core.Security.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
