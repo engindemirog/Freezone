@@ -6,6 +6,7 @@ using Application.Features.Auth.Commands.Revoke;
 using Freezone.Core.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using WebAPI.ValueObjects;
 
 namespace WebAPI.Controllers;
 
@@ -13,6 +14,14 @@ namespace WebAPI.Controllers;
 [ApiController]
 public class AuthController : BaseController
 {
+    private WebApiConfigurations _webApiConfigurations;
+
+    public AuthController(IConfiguration configuration)
+    {
+        _webApiConfigurations = configuration.GetSection("WebApiConfigurations").Get<WebApiConfigurations>()
+                             ?? throw new ArgumentNullException(nameof(WebApiConfigurations));
+    }
+
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
     {
@@ -53,7 +62,8 @@ public class AuthController : BaseController
 
     [HttpPut("RevokeToken")]
     public async Task<IActionResult> RevokeToken(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string? refreshToken) // Uzaktan revoke işlemi için refresh token gönderilebilir.
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]
+        string? refreshToken) // Uzaktan revoke işlemi için refresh token gönderilebilir.
     {
         RevokedResponse response =
             await Mediator.Send(new RevokeCommand
@@ -70,9 +80,21 @@ public class AuthController : BaseController
         EnableEmailAuthenticatorCommand command = new()
         {
             UserId = getUserIdFromToken(),
-            VerifyEmailUrl = "https://localhost:5001/api/Auth/VerifyEmailAuthenticator" // TODO: refactor configuration
+            VerifyEmailUrl = _webApiConfigurations.AuthVerifyEmailUrl
         };
         await Mediator.Send(command);
         return Ok();
     }
+
+    //[HttpGet("VerifyEmailAuthenticator")] // Verify Email URL api'a yönlendirdiği için GET kullandık. Bir frontend yardımıyla yapılırsa PUT olabilir.
+    //public async Task<IActionResult> EnableEmailAuthenticator()
+    //{
+    //    EnableEmailAuthenticatorCommand command = new()
+    //    {
+    //        UserId = getUserIdFromToken(),
+    //        VerifyEmailUrl =  // TODO: refactor configuration
+    //    };
+    //    await Mediator.Send(command);
+    //    return Ok();
+    //}
 }

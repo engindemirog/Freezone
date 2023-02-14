@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Features.Auth.Commands.EnableEmailAuthenticator;
 
-public class EnableEmailAuthenticatorCommand : IRequest
+public class EnableEmailAuthenticatorCommand : IRequest // TODO: Secured
 {
     public int UserId { get; set; }
     public string VerifyEmailUrl { get; set; }
