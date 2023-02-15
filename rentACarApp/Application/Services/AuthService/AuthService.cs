@@ -132,5 +132,26 @@ public class AuthService : IAuthService
         await _mailService.SendAsync(mailData);
     }
 
-    public Task VerifyAuthenticatorCode(User user, string code) => throw new NotImplementedException();
+    public async Task VerifyAuthenticatorCode(User user, string code)
+    {
+        switch (user.AuthenticatorType)
+        {
+            case AuthenticatorType.Email:
+                await verifyEmailAuthenticatorCode(user, code);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task verifyEmailAuthenticatorCode(User user, string code)
+    {
+        UserEmailAuthenticator userEmailAuthenticator = await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
+
+        if(userEmailAuthenticator.Key != code)
+            throw new BusinessException(AuthServiceBusinessMessages.InvalidAuthenticatorCode);
+
+        userEmailAuthenticator.Key = null;
+        await _userEmailAuthenticatorRepository.UpdateAsync(userEmailAuthenticator);
+    }
 }
