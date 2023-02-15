@@ -2,6 +2,7 @@
 using Application.Services.AuthService;
 using Application.Services.Repositories;
 using Freezone.Core.Application.Dtos;
+using Freezone.Core.Security.Authenticator;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.JWT;
 using MediatR;
@@ -33,17 +34,29 @@ public class LoginCommand : IRequest<LoggedResponse>
             await _authBusinessRules.UserShouldBeExists(user);
             await _authBusinessRules.UserPasswordShouldBeMatch(user: user!, request.UserForLoginDto.Password);
 
+            LoggedResponse response = new();
+            if (user!.AuthenticatorType is not AuthenticatorType.None)
+            {
+                if (request.UserForLoginDto.AuthenticatorCode is null)
+                {
+                    await _authService.SendAuthenticatorCode(user);
+                    response.RequiredAuthenticatorType = user.AuthenticatorType;
+                    return response;
+                }
+                else
+                {
+                    await _authService.VerifyAuthenticatorCode(user, request.UserForLoginDto.AuthenticatorCode);
+                }
+            }
+
             AccessToken createdAccessToken = await _authService.CreateAccessToken(user!);
-            
+
             await _authService.DeleteOldActiveRefreshTokens(user!);
-            RefreshToken refreshToken = await _authService.CreateRefreshToken(user!, request.IpAddress);
+            RefreshToken refreshToken = await _authService.CreateRefreshToken(user: user!, request.IpAddress);
             await _authService.AddRefreshToken(refreshToken);
 
-            LoggedResponse response = new()
-            {
-                AccessToken = createdAccessToken,
-                RefreshToken = refreshToken
-            };
+            response.AccessToken = createdAccessToken;
+            response.RefreshToken = refreshToken;
             return response;
         }
     }

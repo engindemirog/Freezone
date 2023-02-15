@@ -88,7 +88,7 @@ public class AuthController : BaseController
     }
 
     [HttpGet("VerifyEmailAuthenticator")] // Verify Email URL api'a yönlendirdiği için GET kullandık. Bir frontend yardımıyla yapılırsa PUT olabilir.
-    public async Task<IActionResult> EnableEmailAuthenticator([FromQuery] string activationKey)
+    public async Task<IActionResult> VerifyEmailAuthenticator([FromQuery] string activationKey)
     {
         VerifyEmailAuthenticatorCommand command = new()
         {
