@@ -31,8 +31,8 @@ public class AuthController : BaseController
             UserForLoginDto = userForLoginDto,
             IpAddress = getIpAddress()
         });
-        setRefreshTokenToCookie(response.RefreshToken);
-        return Ok(response.AccessToken);
+        if (response.RefreshToken is not null) setRefreshTokenToCookie(response.RefreshToken);
+        return Ok(response.ToHttpResponse());
     }
 
     [HttpPost("Register")]
@@ -57,7 +57,7 @@ public class AuthController : BaseController
                 RefreshToken = getRefreshTokenFromCookie(),
                 IpAddress = getIpAddress()
             });
-        setRefreshTokenToCookie(response.RefreshToken);
+        if (response.RefreshToken is not null) setRefreshTokenToCookie(response.RefreshToken);
         return Ok(response.AccessToken);
     }
 

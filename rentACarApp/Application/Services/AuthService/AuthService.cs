@@ -1,5 +1,7 @@
 ﻿using Application.Services.Repositories;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
+using Freezone.Core.Mailing;
+using Freezone.Core.Security.Authenticator;
 using Freezone.Core.Security.Authenticator.Email;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.JWT;
@@ -12,15 +14,21 @@ public class AuthService : IAuthService
     private readonly ITokenHelper _tokenHelper;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IEmailAuthenticatorHelper _emailAuthenticatorHelper;
+    private readonly IUserEmailAuthenticatorRepository _userEmailAuthenticatorRepository;
+    private readonly IMailService _mailService;
 
     public AuthService(IUserOperationClaimRepository userOperationClaimRepository, ITokenHelper tokenHelper,
                        IRefreshTokenRepository refreshTokenRepository,
-                       IEmailAuthenticatorHelper emailAuthenticatorHelper)
+                       IEmailAuthenticatorHelper emailAuthenticatorHelper, 
+                       IUserEmailAuthenticatorRepository userEmailAuthenticatorRepository, 
+                       IMailService mailService)
     {
         _userOperationClaimRepository = userOperationClaimRepository;
         _tokenHelper = tokenHelper;
         _refreshTokenRepository = refreshTokenRepository;
         _emailAuthenticatorHelper = emailAuthenticatorHelper;
+        _userEmailAuthenticatorRepository = userEmailAuthenticatorRepository;
+        _mailService = mailService;
     }
 
     public async Task<AccessToken> CreateAccessToken(User user)
@@ -94,7 +102,35 @@ public class AuthService : IAuthService
             IsVerified = false
         };
 
-    public Task SendAuthenticatorCode(User user) => throw new NotImplementedException();
+    public async Task SendAuthenticatorCode(User user)
+    {
+        switch (user.AuthenticatorType)
+        {
+            case AuthenticatorType.Email:
+                await sendAuthenticatorCodeWithEmail(user);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task sendAuthenticatorCodeWithEmail(User user)
+    {
+        UserEmailAuthenticator userEmailAuthenticator = await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
+
+        string authenticatorCode = await _emailAuthenticatorHelper.CreateEmailAuthenticatorCodeAsync();
+        userEmailAuthenticator.Key = authenticatorCode;
+        await _userEmailAuthenticatorRepository.UpdateAsync(userEmailAuthenticator);
+
+        Mail mailData = new()
+        {
+            ToFullName = $"{user.FirstName} {user.LastName}",
+            ToEmail = user.Email,
+            Subject = AuthServiceBusinessMessages.AuthenticatorCodeSubject,
+            TextBody = AuthServiceBusinessMessages.AuthenticatorCodeTextBody(authenticatorCode)
+        };
+        await _mailService.SendAsync(mailData);
+    }
 
     public Task VerifyAuthenticatorCode(User user, string code) => throw new NotImplementedException();
 }
