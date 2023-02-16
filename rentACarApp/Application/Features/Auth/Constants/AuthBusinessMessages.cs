@@ -11,6 +11,7 @@ public static class AuthBusinessMessages
     public const string VerifyEmail = "E-posta adresinizi doğrulayın";
     public const string ClickOnBelowLinkToVerifyEmail = "E-posta adresinizi doğrulamak için lütfen aşağıdaki linke tıklayın:";
     public const string UserEmailAuthenticatorNotFound = "Kullanıcıya ait onaylanması gereken e-posta doğrulama isteği bulunamadı.";
+    public const string UserOtpAuthenticatorNotFound = "Kullanıcıya ait onaylanması gereken OTP doğrulama isteği bulunamadı.";
 
     public static string UserEmailAlreadyExitsByEmail(string email)
     {

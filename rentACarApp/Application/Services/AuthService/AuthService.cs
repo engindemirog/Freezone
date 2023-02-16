@@ -127,8 +127,6 @@ public class AuthService : IAuthService
             case AuthenticatorType.Email:
                 await sendAuthenticatorCodeWithEmail(user);
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     }
 

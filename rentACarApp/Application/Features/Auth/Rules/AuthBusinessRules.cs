@@ -66,4 +66,11 @@ public class AuthBusinessRules : BaseBusinessRules
             throw new BusinessException(AuthBusinessMessages.UserEmailAuthenticatorNotFound);
         return Task.CompletedTask;
     }
+
+    public Task UserOtpAuthenticatorShouldBeExists(UserOtpAuthenticator userOtpAuthenticator)
+    {
+        if(userOtpAuthenticator is null)
+            throw new BusinessException(AuthBusinessMessages.UserOtpAuthenticatorNotFound);
+        return Task.CompletedTask;
+    }
 }

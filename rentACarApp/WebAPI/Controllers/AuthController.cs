@@ -1,9 +1,11 @@
 ﻿using Application.Features.Auth.Commands.EnableEmailAuthenticator;
+using Application.Features.Auth.Commands.EnableOtpAuthenticator;
 using Application.Features.Auth.Commands.Login;
 using Application.Features.Auth.Commands.Refresh;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Commands.Revoke;
 using Application.Features.Auth.Commands.VerifyEmailAuthenticator;
+using Application.Features.Auth.Commands.VerifyOtpAuthenticator;
 using Freezone.Core.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -97,5 +99,31 @@ public class AuthController : BaseController
         };
         await Mediator.Send(command);
         return Ok("Email doğrulama işlemi başarılı.");
+    }
+
+    [HttpPost("EnableOtpAuthenticator")]
+    public async Task<IActionResult> EnableOtpAuthenticator()
+    {
+        EnableOtpAuthenticatorCommand command = new()
+        {
+            UserId = getUserIdFromToken(),
+            SecretKeyLabel = "RentACar", //TODO: get from configuration
+            SecretKeyIssuer = "freezone@rentacar.com" //TODO: get from configuration
+
+        };
+        EnabledOtpAuthenticatorResponse response = await Mediator.Send(command);
+        return Ok(response);
+    }
+
+    [HttpPut("VerifyOtpAuthenticator")]
+    public async Task<IActionResult> VerifyOtpAuthenticator([FromBody] string otpCode)
+    {
+        VerifyOtpAuthenticatorCommand command = new()
+        {
+            UserId = getUserIdFromToken(),
+            OtpCode = otpCode
+        };
+        await Mediator.Send(command);
+        return Ok();
     }
 }
