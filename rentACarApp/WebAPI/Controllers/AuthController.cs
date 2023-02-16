@@ -96,6 +96,6 @@ public class AuthController : BaseController
             ActivationKey = activationKey
         };
         await Mediator.Send(command);
-        return Ok();
+        return Ok("Email doğrulama işlemi başarılı.");
     }
 }

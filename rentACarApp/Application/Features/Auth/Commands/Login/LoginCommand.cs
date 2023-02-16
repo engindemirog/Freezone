@@ -47,8 +47,8 @@ public class LoginCommand : IRequest<LoggedResponse>
                 {
                     await _authService.VerifyAuthenticatorCode(user, request.UserForLoginDto.AuthenticatorCode);
                 }
-            }
-
+            } 
+            
             AccessToken createdAccessToken = await _authService.CreateAccessToken(user!);
 
             await _authService.DeleteOldActiveRefreshTokens(user!);
