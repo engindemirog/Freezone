@@ -16,6 +16,9 @@ public interface IAuthService
     public Task<RefreshToken> RotateRefreshToken(User user, RefreshToken token, string ipAddress); // Önceki refresh token'ı geçersiz kılıcak (revoke) aktifliği yeni refresh token'a vericek.
 
     public Task<UserEmailAuthenticator> CreateEmailAuthenticator(User user);
+    
+    public Task<UserOtpAuthenticator> CreateOtpAuthenticator(User user);
+    public Task<string> ConvertOtpSecretKeyToString(byte[] secretKeyBytes);
 
     public Task SendAuthenticatorCode(User user);
     public Task VerifyAuthenticatorCode(User user, string code);

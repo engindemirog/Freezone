@@ -3,6 +3,7 @@ using Freezone.Core.CrossCuttingConcerns.Exceptions;
 using Freezone.Core.Mailing;
 using Freezone.Core.Security.Authenticator;
 using Freezone.Core.Security.Authenticator.Email;
+using Freezone.Core.Security.Authenticator.Otp;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.JWT;
 
@@ -16,12 +17,16 @@ public class AuthService : IAuthService
     private readonly IEmailAuthenticatorHelper _emailAuthenticatorHelper;
     private readonly IUserEmailAuthenticatorRepository _userEmailAuthenticatorRepository;
     private readonly IMailService _mailService;
+    private readonly IOtpAuthenticatorHelper _otpAuthenticatorHelper;
+    private readonly IUserOtpAuthenticatorRepository _userOtpAuthenticatorRepository;
 
     public AuthService(IUserOperationClaimRepository userOperationClaimRepository, ITokenHelper tokenHelper,
                        IRefreshTokenRepository refreshTokenRepository,
-                       IEmailAuthenticatorHelper emailAuthenticatorHelper, 
-                       IUserEmailAuthenticatorRepository userEmailAuthenticatorRepository, 
-                       IMailService mailService)
+                       IEmailAuthenticatorHelper emailAuthenticatorHelper,
+                       IUserEmailAuthenticatorRepository userEmailAuthenticatorRepository,
+                       IMailService mailService, 
+                       IOtpAuthenticatorHelper otpAuthenticatorHelper,
+                       IUserOtpAuthenticatorRepository userOtpAuthenticatorRepository)
     {
         _userOperationClaimRepository = userOperationClaimRepository;
         _tokenHelper = tokenHelper;
@@ -29,6 +34,8 @@ public class AuthService : IAuthService
         _emailAuthenticatorHelper = emailAuthenticatorHelper;
         _userEmailAuthenticatorRepository = userEmailAuthenticatorRepository;
         _mailService = mailService;
+        _otpAuthenticatorHelper = otpAuthenticatorHelper;
+        _userOtpAuthenticatorRepository = userOtpAuthenticatorRepository;
     }
 
     public async Task<AccessToken> CreateAccessToken(User user)
@@ -94,13 +101,24 @@ public class AuthService : IAuthService
         return newRefreshToken;
     }
 
-    public async Task<UserEmailAuthenticator> CreateEmailAuthenticator(User user)
-        => new UserEmailAuthenticator
+    public async Task<UserEmailAuthenticator> CreateEmailAuthenticator(User user) // Entity üretmek için
+        => new()
         {
             UserId = user.Id,
             Key = await _emailAuthenticatorHelper.CreateEmailActivationKeyAsync(),
             IsVerified = false
         };
+
+    public async Task<UserOtpAuthenticator> CreateOtpAuthenticator(User user) // Entity üretmek için
+        => new()
+        {
+            UserId = user.Id,
+            SecretKey = await _otpAuthenticatorHelper.GenerateSecretKeyAsync(),
+            IsVerified = false,
+        };
+
+    public Task<string> ConvertOtpSecretKeyToString(byte[] secretKeyBytes)
+        => _otpAuthenticatorHelper.ConvertSecretKeyToStringAsync(secretKeyBytes); // Base32 ile secret key'i string'e dönüştürecek. Kullanıcıya dönmek için kullanacağız.
 
     public async Task SendAuthenticatorCode(User user)
     {
@@ -114,9 +132,24 @@ public class AuthService : IAuthService
         }
     }
 
+    public async Task VerifyAuthenticatorCode(User user, string code)
+    {
+        switch (user.AuthenticatorType)
+        {
+            case AuthenticatorType.Email:
+                await verifyEmailAuthenticatorCode(user, code);
+                break;
+            case AuthenticatorType.Otp:
+                await verifyOtpAuthenticatorCode(user, code);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
     private async Task sendAuthenticatorCodeWithEmail(User user)
     {
-        UserEmailAuthenticator userEmailAuthenticator = await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
+        UserEmailAuthenticator userEmailAuthenticator =
+            await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
 
         string authenticatorCode = await _emailAuthenticatorHelper.CreateEmailAuthenticatorCodeAsync();
         userEmailAuthenticator.Key = authenticatorCode;
@@ -132,26 +165,26 @@ public class AuthService : IAuthService
         await _mailService.SendAsync(mailData);
     }
 
-    public async Task VerifyAuthenticatorCode(User user, string code)
-    {
-        switch (user.AuthenticatorType)
-        {
-            case AuthenticatorType.Email:
-                await verifyEmailAuthenticatorCode(user, code);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
     private async Task verifyEmailAuthenticatorCode(User user, string code)
     {
-        UserEmailAuthenticator userEmailAuthenticator = await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
+        UserEmailAuthenticator userEmailAuthenticator =
+            await _userEmailAuthenticatorRepository.GetAsync(uea => uea.UserId == user.Id);
 
-        if(userEmailAuthenticator.Key != code)
+        if (userEmailAuthenticator.Key != code)
             throw new BusinessException(AuthServiceBusinessMessages.InvalidAuthenticatorCode);
 
         userEmailAuthenticator.Key = null;
         await _userEmailAuthenticatorRepository.UpdateAsync(userEmailAuthenticator);
+    }
+    
+    private async Task verifyOtpAuthenticatorCode(User user, string codeToVerify)
+    {
+        UserOtpAuthenticator userOtpAuthenticator =
+            await _userOtpAuthenticatorRepository.GetAsync(uoa => uoa.UserId == user.Id);
+
+        bool result = await _otpAuthenticatorHelper.VerifyCodeAsync(userOtpAuthenticator.SecretKey, codeToVerify);
+
+        if (!result)
+            throw new BusinessException(AuthServiceBusinessMessages.InvalidAuthenticatorCode);
     }
 }
