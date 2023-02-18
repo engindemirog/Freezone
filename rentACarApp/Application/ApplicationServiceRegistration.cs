@@ -16,6 +16,10 @@ using Application.Services.AuthService;
 using Freezone.Core.Application.Pipelines.Authorization;
 using Freezone.Core.Application.Pipelines.Transaction;
 using Freezone.Core.Application.Pipelines.Caching;
+using Freezone.Core.Mailing;
+using Freezone.Core.Mailing.MailKit;
+using Freezone.Core.Security.Authenticator.Email;
+using Freezone.Core.Security.Authenticator.Otp;
 using Freezone.Core.Security.JWT;
 
 namespace Application
@@ -47,6 +51,9 @@ namespace Application
 
             services.AddScoped<ITokenHelper, JwtHelper>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IEmailAuthenticatorHelper, EmailAuthenticatorHelper>();
+            services.AddScoped<IMailService, MailKitMailService>();
+            services.AddScoped<IOtpAuthenticatorHelper, OtpAuthenticatorHelper>();
 
             return services;
 

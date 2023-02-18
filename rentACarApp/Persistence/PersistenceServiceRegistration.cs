@@ -30,7 +30,8 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();
         services.AddScoped<IUserOperationClaimRepository, UserOperationClaimRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
+        services.AddScoped<IUserEmailAuthenticatorRepository, UserEmailAuthenticatorRepository>();
+        services.AddScoped<IUserOtpAuthenticatorRepository, UserOtpAuthenticatorRepository>();
 
         return services;
     }

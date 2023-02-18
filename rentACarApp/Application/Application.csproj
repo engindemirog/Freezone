@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <Folder Include="Features\Auth\Commands\Login\" />
+    <Folder Include="Features\Auth\Commands\EnableEmailAuthenticator\" />
+    <Folder Include="Features\Auth\Commands\EnableOtpAuthenticator\" />
+    <Folder Include="Features\Auth\Commands\VerifyOtpAuthenticator\" />
+    <Folder Include="Features\Auth\Commands\VerifyEmailAuthenticator\" />
+    <Folder Include="Features\Auth\Commands\Revoke\" />
     <Folder Include="Features\Auth\Commands\Register\" />
     <Folder Include="Features\Auth\Constants\" />
     <Folder Include="Features\Auth\Profiles\" />
@@ -35,8 +40,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\corePackages\Freezone.Core.Application\Freezone.Core.Application.csproj" />
     <ProjectReference Include="..\..\corePackages\Freezone.Core.CrossCuttingConcerns\Freezone.Core.CrossCuttingConcerns.csproj" />
+    <ProjectReference Include="..\..\corePackages\Freezone.Core.Mailing\Freezone.Core.Mailing\Freezone.Core.Mailing.csproj" />
     <ProjectReference Include="..\..\corePackages\Freezone.Core.Security\Freezone.Core.Security\Freezone.Core.Security.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Server.IIS">
+      <HintPath>..\..\..\..\..\..\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\7.0.2\ref\net7.0\Microsoft.AspNetCore.Server.IIS.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

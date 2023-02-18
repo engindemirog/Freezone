@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class OperationClaimConfiguration:IEntityTypeConfiguration<OperationClaim>
+public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationClaim>
 {
     public void Configure(EntityTypeBuilder<OperationClaim> builder)
     {
@@ -13,6 +13,15 @@ public class OperationClaimConfiguration:IEntityTypeConfiguration<OperationClaim
         builder.Property(p => p.Id).HasColumnName("Id");
         builder.Property(p => p.Name).HasColumnName("Name");
 
-        builder.HasIndex(p => p.Name, "UK_OperationClaims_Name").IsUnique();
+        builder.HasIndex(indexExpression: p => p.Name, name: "UK_OperationClaims_Name").IsUnique();
+
+        List<OperationClaim> seed = new();
+        int id = 0;
+
+        #region FeatureOperationClaims
+
+        #endregion
+
+        builder.HasData(seed);
     }
 }

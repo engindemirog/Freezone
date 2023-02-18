@@ -1,4 +1,5 @@
-﻿using Application;
+﻿using System.Text.Json.Serialization;
+using Application;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
 using Freezone.Core.Security.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,7 +35,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // Au
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    /* Nesnelerin içerisinde birbirini gösteren referanslar olabilir.
+     Örn. 
+        User içerisinde RefreshTokens listesi bulunmakta va RefreshToken nesnelerinin referanslarını göstermektedir.
+        RefreshToken nesnelerin için de de User referansı göstermektedir.
+
+        User (referanceId: 1) 
+            RefreshTokens: [
+                RefreshToken (referanceId: 2)
+            ]
+    
+        RefreshToken (referanceId: 2)
+            User: User (referanceId: 1)
+    
+        asp.net core tarafında, JSON serileştirme işlemi sırasında sonsuz döngüye girer ve hata verir.
+     */
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>

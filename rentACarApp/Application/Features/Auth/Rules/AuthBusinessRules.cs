@@ -2,6 +2,7 @@
 using Application.Services.Repositories;
 using Freezone.Core.Application.Rules;
 using Freezone.Core.CrossCuttingConcerns.Exceptions;
+using Freezone.Core.Security.Authenticator;
 using Freezone.Core.Security.Entities;
 using Freezone.Core.Security.Hashing;
 
@@ -44,10 +45,32 @@ public class AuthBusinessRules : BaseBusinessRules
         return Task.CompletedTask;
     }
 
-    public async Task RefreshTokenShouldBeActive(RefreshToken refreshToken)
+    public Task RefreshTokenShouldBeActive(RefreshToken refreshToken)
     {
         if (refreshToken.RevokedDate != null ||
             (refreshToken.RevokedDate == null && refreshToken.ExpiresDate < DateTime.UtcNow))
             throw new BusinessException(AuthBusinessMessages.RefreshTokenNotActive);
+        return Task.CompletedTask;
+    }
+
+    public Task UserShouldNotBeHasAuthenticator(User user)
+    {
+        if (user.AuthenticatorType is not AuthenticatorType.None)
+            throw new BusinessException(AuthBusinessMessages.UserAlreadyHasAuthenticator);
+        return Task.CompletedTask;
+    }
+
+    public Task UserEmailAuthenticatorShouldBeExists(UserEmailAuthenticator? userEmailAuthenticator)
+    {
+        if(userEmailAuthenticator is null)
+            throw new BusinessException(AuthBusinessMessages.UserEmailAuthenticatorNotFound);
+        return Task.CompletedTask;
+    }
+
+    public Task UserOtpAuthenticatorShouldBeExists(UserOtpAuthenticator userOtpAuthenticator)
+    {
+        if(userOtpAuthenticator is null)
+            throw new BusinessException(AuthBusinessMessages.UserOtpAuthenticatorNotFound);
+        return Task.CompletedTask;
     }
 }
